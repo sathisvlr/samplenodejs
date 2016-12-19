@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "an example of making a node.js api",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://sathisvlr@github.com/sathisvlr/samplenodejs.git"
@@ -19,5 +16,10 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha",
+    "postinstall": "bower install && grunt build"
   }
 }
