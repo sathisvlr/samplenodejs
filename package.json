@@ -19,7 +19,6 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "mocha",
-    "postinstall": "bower install && grunt build"
+    "test": "mocha"
   }
 }
