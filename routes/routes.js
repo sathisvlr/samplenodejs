@@ -18,14 +18,7 @@ var appRouter = function(app) {
   });
 
   app.post("/branchlocator", function(req, res) {
-      var branchResponse =
-        {
-        "speech": "Barack Hussein Obama II is the 44th and current President of the United States.",
-        "displayText": "Barack Hussein Obama II is the 44th and current President of the United States, and the first African American to hold the office. Born in Honolulu, Hawaii, Obama is a graduate of Columbia University   and Harvard Law School, where ",
-        "data": {},
-        "contextOut": [],
-        "source": "DuckDuckGo"
-        }
+
         var zip = "94587";
       getJsonFromBranchLocator(zip, function(data){
             if(data.GetListATMorBranchReply.BranchList.length == 0)
@@ -52,8 +45,17 @@ var appRouter = function(app) {
                     + branchName + " location. It's located " + distance + " away at " + streetAddress + ". " +
                     "The branch closes this evening at " + closingTime + ".";
 
+            var branchResponse =
+                      {
+                      "speech": cardMsg,
+                      "displayText": "",
+                      "data": {},
+                      "contextOut": [],
+                      "source": "DuckDuckGo"
+                      }
+
             //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
-            res.send(spokenMsg);
+            res.send(branchResponse);
        });
   });
 
