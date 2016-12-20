@@ -62,7 +62,7 @@ var appRouter = function(app) {
   var url = function(zip){
     return "https://publicrestservice.usbank.com/public/ATMBranchLocatorRESTService_V_8_0/GetListATMorBranch/LocationSearch/" +
                     "StringQuery?application=parasoft&transactionid=cb6b8ea5-3331-408c-9ab3-58e18f2e5f95&output=json&searchtype=E&" +
-                    "stringquery=" + zip + "&branchfeatures=BOP";
+                    "stringquery=" + zip + "&branchfeatures=BOP&maxitems=1&radius=5";
 };
 
 var getJsonFromBranchLocator = function (zip, callback){
