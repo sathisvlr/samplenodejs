@@ -47,7 +47,7 @@ var appRouter = function(app) {
 
             var branchResponse =
                       {
-                      "speech": cardMsg,
+                      "speech": "cardMsg",
                       "displayText": "",
                       "data": {},
                       "contextOut": [],
