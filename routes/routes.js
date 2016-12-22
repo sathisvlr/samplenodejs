@@ -21,18 +21,42 @@ var appRouter = function(app) {
 
       var zip = "94587";
       getJsonFromBranchLocator(zip, function(data){
-        var branchResponse =
-                  {
-                  "speech": "cardMsg",
-                  "displayText": "",
-                  "data": {},
-                  "contextOut": [],
-                  "source": "DuckDuckGo"
-                  }
+        if(data.GetListATMorBranchReply.BranchList.length == 0)
+          {
+              spokenMsg = "<speak>The zip code <say-as interpret-as=\"digits\">" + zip +
+                  "</say-as> does not have any nearby branches.</speak>";
+              cardMsg = "The zip code " + zip + " does not have any nearby branches.";
 
-        //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
-        res.send(branchResponse);
-        return;
+              response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
+              return;
+          }
+
+          var branchName = data.GetListATMorBranchReply.BranchList[0].Name.replace("&", "and");
+          var distance = data.GetListATMorBranchReply.BranchList[0].Distance + " miles";
+          var streetAddress = data.GetListATMorBranchReply.BranchList[0].LocationIdentifier.Address.AddressLine1.replace("&", "and");
+          var closingTime = getBranchClosingTimeForToday(data.GetListATMorBranchReply.BranchList[0]);
+
+          spokenMsg = "<speak>The closest Branch to the <say-as interpret-as=\"digits\">" + zip +
+                  "</say-as> zip code is the " + branchName + " location. It's located " + distance +
+                  " away at " + streetAddress + ". " +
+                  "The branch closes this evening at " + closingTime + ".</speak>";
+
+          cardMsg = "The closest Branch to the " + zip + " zip code is the "
+                  + branchName + " location. It's located " + distance + " away at " + streetAddress + ". " +
+                  "The branch closes this evening at " + closingTime + ".";
+
+          var branchResponse =
+                    {
+                    "speech": cardMsg,
+                    "displayText": "",
+                    "data": {},
+                    "contextOut": [],
+                    "source": "U.S Bank"
+                    }
+
+          //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
+          res.send(branchResponse);
+          return;
        });
   });
 
@@ -55,8 +79,8 @@ var getJsonFromBranchLocator = function (zip, callback){
     res.on('end', function(){
       var t1 = new Date().getTime();
       console.log("Call to service took " + (t1 - t0) + " milliseconds.");
-      var result = body;
-      //var result = JSON.parse(body);
+      //var result = body;
+      var result = JSON.parse(body);
       return callback(result);
     });
 
