@@ -19,50 +19,28 @@ var appRouter = function(app) {
 
   app.post("/branchlocator", function(req, res) {
 
-        var zip = "94587";
+      var zip = "94587";
       getJsonFromBranchLocator(zip, function(data){
-            if(data.GetListATMorBranchReply.BranchList.length == 0)
-            {
-                spokenMsg = "<speak>The zip code <say-as interpret-as=\"digits\">" + zip +
-                    "</say-as> does not have any nearby branches.</speak>";
-                cardMsg = "The zip code " + zip + " does not have any nearby branches.";
+        var branchResponse =
+                  {
+                  "speech": data,
+                  "displayText": "",
+                  "data": {},
+                  "contextOut": [],
+                  "source": "DuckDuckGo"
+                  }
 
-                response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
-                return;
-            }
+        //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
+        res.send(branchResponse);
 
-            var branchName = data.GetListATMorBranchReply.BranchList[0].Name.replace("&", "and");
-            var distance = data.GetListATMorBranchReply.BranchList[0].Distance + " miles";
-            var streetAddress = data.GetListATMorBranchReply.BranchList[0].LocationIdentifier.Address.AddressLine1.replace("&", "and");
-            var closingTime = getBranchClosingTimeForToday(data.GetListATMorBranchReply.BranchList[0]);
 
-            spokenMsg = "<speak>The closest Branch to the <say-as interpret-as=\"digits\">" + zip +
-                    "</say-as> zip code is the " + branchName + " location. It's located " + distance +
-                    " away at " + streetAddress + ". " +
-                    "The branch closes this evening at " + closingTime + ".</speak>";
 
-            cardMsg = "The closest Branch to the " + zip + " zip code is the "
-                    + branchName + " location. It's located " + distance + " away at " + streetAddress + ". " +
-                    "The branch closes this evening at " + closingTime + ".";
 
-            var branchResponse =
-                      {
-                      "speech": "cardMsg",
-                      "displayText": "",
-                      "data": {},
-                      "contextOut": [],
-                      "source": "DuckDuckGo"
-                      }
-
-            //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
-            res.send(branchResponse);
        });
   });
 
   var url = function(zip){
-    return "https://publicrestservice.usbank.com/public/ATMBranchLocatorRESTService_V_8_0/GetListATMorBranch/LocationSearch/" +
-                    "StringQuery?application=parasoft&transactionid=cb6b8ea5-3331-408c-9ab3-58e18f2e5f95&output=json&searchtype=E&" +
-                    "stringquery=" + zip + "&branchfeatures=BOP&maxitems=1&radius=5";
+    return "https://branchservice.herokuapp.com/";
 };
 
 var getJsonFromBranchLocator = function (zip, callback){
@@ -74,7 +52,7 @@ var getJsonFromBranchLocator = function (zip, callback){
     });
 
     res.on('end', function(){
-      var result = JSON.parse(body);
+      var result = body;
       callback(result);
     });
 
