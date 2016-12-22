@@ -23,7 +23,7 @@ var appRouter = function(app) {
       getJsonFromBranchLocator(zip, function(data){
         var branchResponse =
                   {
-                  "speech": data,
+                  "speech": "cardMsg",
                   "displayText": "",
                   "data": {},
                   "contextOut": [],
@@ -32,18 +32,19 @@ var appRouter = function(app) {
 
         //response.tellWithCard(spokenMsg, "Branch Locator", cardMsg);
         res.send(branchResponse);
-
-
-
-
+        return;
        });
   });
 
   var url = function(zip){
-    return "https://branchservice.herokuapp.com/";
+    return "https://publicrestservice.usbank.com/public/ATMBranchLocatorRESTService_V_8_0/GetListATMorBranch/LocationSearch/" +
+                    "StringQuery?application=parasoft&transactionid=cb6b8ea5-3331-408c-9ab3-58e18f2e5f95&output=json&searchtype=E&" +
+                    "stringquery=" + zip + "&branchfeatures=BOP&maxitems=1&radius=5";
+    //return "https://branchservice.herokuapp.com/";
 };
 
 var getJsonFromBranchLocator = function (zip, callback){
+  var t0 = new Date().getTime();
     https.get(url(zip), function(res){
     var body = '';
 
@@ -52,8 +53,11 @@ var getJsonFromBranchLocator = function (zip, callback){
     });
 
     res.on('end', function(){
+      var t1 = new Date().getTime();
+      console.log("Call to service took " + (t1 - t0) + " milliseconds.");
       var result = body;
-      callback(result);
+      //var result = JSON.parse(body);
+      return callback(result);
     });
 
   }).on('error', function(e){
